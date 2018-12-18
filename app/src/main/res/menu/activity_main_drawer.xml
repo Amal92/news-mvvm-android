@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+
+    <item android:title="@string/news">
+        <menu>
+            <group
+                android:id="@+id/group2"
+                android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_news_latest"
+                    android:title="@string/latest"
+                    android:icon="@drawable/flash_circle"/>
+                <item
+                    android:id="@+id/nav_news_business"
+                    android:title="@string/business"
+                    android:icon="@drawable/chart_line"/>
+                <item
+                    android:id="@+id/nav_news_sports"
+                    android:title="@string/sports"
+                    android:icon="@drawable/badminton"/>
+                <item
+                    android:id="@+id/nav_news_tech"
+                    android:title="@string/technology"
+                    android:icon="@drawable/codepen"/>
+                <item
+                    android:id="@+id/nav_news_science"
+                    android:title="@string/science"
+                    android:icon="@drawable/atom"/>
+            </group>
+        </menu>
+    </item>
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_weather"
+            android:title="@string/weather"
+            android:icon="@drawable/brightness_7"/>
+    </group>
+
+</menu>
