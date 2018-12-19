@@ -20,6 +20,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -85,7 +86,8 @@ public class WeatherFragment extends Fragment implements OnMapReadyCallback {
         mFusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(Location location) {
-                mMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).title("Marker in current location"));
+                mMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).title("Marker in current location")
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
             }
         });
     }
@@ -100,10 +102,14 @@ public class WeatherFragment extends Fragment implements OnMapReadyCallback {
         final LatLng MUMBAI = new LatLng(19.0760, 72.8777);
         final LatLng CHENNAI = new LatLng(13.0827, 80.2707);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(INDIA, 4.5f));
-        mMap.addMarker(new MarkerOptions().position(DELHI).title("Marker in delhi"));
-        mMap.addMarker(new MarkerOptions().position(KOLKATA).title("Marker in kolkata"));
-        mMap.addMarker(new MarkerOptions().position(MUMBAI).title("Marker in mumbai"));
-        mMap.addMarker(new MarkerOptions().position(CHENNAI).title("Marker in chennai"));
+        mMap.addMarker(new MarkerOptions().position(DELHI).title("Marker in delhi")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+        mMap.addMarker(new MarkerOptions().position(KOLKATA).title("Marker in kolkata")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+        mMap.addMarker(new MarkerOptions().position(MUMBAI).title("Marker in mumbai")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+        mMap.addMarker(new MarkerOptions().position(CHENNAI).title("Marker in chennai")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 
     }
 
