@@ -1,12 +1,19 @@
 package com.amp.news.Repository;
 
+import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.os.AsyncTask;
 
 import com.amp.news.ApiResponsePojo.NewsApiResponse;
+import com.amp.news.Database.NewsDao;
+import com.amp.news.Database.NewsRoomDatabase;
+import com.amp.news.Models.NewsDetail;
 import com.amp.news.Networking.ApiInterface;
 import com.amp.news.Networking.RetrofitApiClient;
 import com.amp.news.Utils.Const;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -19,14 +26,22 @@ import retrofit2.Response;
 public class NewsDataRepository {
 
     ApiInterface apiInterface;
+    private NewsDao newsDao;
+    private static NewsDataRepository Instance = null;
+    LiveData<List<NewsDetail>> savedNews;
 
-    public NewsDataRepository() {
+    public NewsDataRepository(Application application) {
         this.apiInterface = RetrofitApiClient.getInstance().create(ApiInterface.class);
+        NewsRoomDatabase db = NewsRoomDatabase.getDatabase(application);
+        newsDao = db.wordDao();
+        savedNews = newsDao.getAllSavedNews();
     }
 
-    /*public static NewsDataRepository getInstance(){
-
-    }*/
+    public static NewsDataRepository getInstance(Application application){
+        if (Instance == null)
+            Instance = new NewsDataRepository(application);
+        return Instance;
+    }
 
     public LiveData<NewsApiResponse> getNews(String category) {
         final MutableLiveData<NewsApiResponse> data = new MutableLiveData<>();
@@ -47,6 +62,29 @@ public class NewsDataRepository {
             }
         });
         return data;
+    }
+
+    public void insertNews(NewsDetail newsDetail){
+        new insertAsyncTask(newsDao).execute(newsDetail);
+    }
+
+    public LiveData<List<NewsDetail>> getAllSavedNews(){
+        return savedNews;
+    }
+
+    private static class insertAsyncTask extends AsyncTask<NewsDetail, Void, Void> {
+
+        private NewsDao mAsyncTaskDao;
+
+        insertAsyncTask(NewsDao dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final NewsDetail... params) {
+            mAsyncTaskDao.insert(params[0]);
+            return null;
+        }
     }
 
 }

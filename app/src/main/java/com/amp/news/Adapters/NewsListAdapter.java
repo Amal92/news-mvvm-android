@@ -1,6 +1,8 @@
 package com.amp.news.Adapters;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -11,6 +13,7 @@ import android.widget.TextView;
 
 import com.amp.news.Models.NewsDetail;
 import com.amp.news.R;
+import com.amp.news.ViewModels.NewsViewModel;
 import com.bumptech.glide.Glide;
 
 import org.joda.time.DateTime;
@@ -29,10 +32,12 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.MyView
     private LayoutInflater mInflater;
     private List<NewsDetail> newsDetails;
     private Context context;
+    private NewsViewModel newsViewModel;
 
     public NewsListAdapter(Context mContext) {
         mInflater = LayoutInflater.from(mContext);
         this.context = mContext;
+        newsViewModel = ViewModelProviders.of((FragmentActivity) context).get(NewsViewModel.class);
     }
 
     @Override
@@ -48,7 +53,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.MyView
         holder.description_tv.setText(newsDetail.getDescription());
         holder.source_tv.setText(newsDetail.getSource().getName());
         DateTime dateTime = new DateTime(newsDetail.getPublishedAt());
-        String datetimeString =  (String) DateUtils.getRelativeTimeSpanString(dateTime.getMillis(), System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS);
+        String datetimeString = (String) DateUtils.getRelativeTimeSpanString(dateTime.getMillis(), System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS);
         holder.time_tv.setText(datetimeString);
         Glide.with(context).load(newsDetail.getUrlToImage()).into(holder.image_iv);
     }
@@ -82,11 +87,18 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.MyView
         @BindView(R.id.time_tv)
         TextView time_tv;
 
-
+        @BindView(R.id.bookmark_button)
+        ImageView bookmark_button;
 
         public MyViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
+            bookmark_button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    newsViewModel.insertArticle(newsDetails.get(getAdapterPosition()));
+                }
+            });
         }
     }
 }

@@ -1,16 +1,28 @@
 package com.amp.news.Models;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Embedded;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
+
 /**
  * Created by amal on 17/12/18.
  */
 
+@Entity(tableName = "news_table")
 public class NewsDetail {
     private String author;
     private String title;
     private String description;
+    @PrimaryKey
+    @NonNull
     private String url;
+    @ColumnInfo(name = "url_to_image")
     private String urlToImage;
+    @Embedded
     private Source source;
+    @ColumnInfo(name = "published_at")
     private String publishedAt;
 
     public String getAuthor() {

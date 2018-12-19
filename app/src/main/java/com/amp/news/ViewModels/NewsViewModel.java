@@ -3,7 +3,6 @@ package com.amp.news.ViewModels;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
 import com.amp.news.ApiResponsePojo.NewsApiResponse;
@@ -20,16 +19,25 @@ public class NewsViewModel extends AndroidViewModel {
 
     private LiveData<NewsApiResponse> newsApiResponseLiveData;
     private NewsDataRepository newsDataRepository;
+    private LiveData<List<NewsDetail>> savedNews;
 
     public NewsViewModel(@NonNull Application application) {
         super(application);
-        newsDataRepository = new NewsDataRepository();
+        newsDataRepository = NewsDataRepository.getInstance(application);
+        savedNews = newsDataRepository.getAllSavedNews();
     }
 
-    public LiveData<NewsApiResponse> getNews(String category){
+    public LiveData<NewsApiResponse> getNews(String category) {
         newsApiResponseLiveData = newsDataRepository.getNews(category);
         return newsApiResponseLiveData;
     }
 
+    public void insertArticle(NewsDetail newsDetail) {
+        newsDataRepository.insertNews(newsDetail);
+    }
+
+    public LiveData<List<NewsDetail>> getSavedNews() {
+        return savedNews;
+    }
 
 }
