@@ -25,10 +25,10 @@ import retrofit2.Response;
 
 public class NewsDataRepository {
 
-    ApiInterface apiInterface;
-    private NewsDao newsDao;
     private static NewsDataRepository Instance = null;
+    ApiInterface apiInterface;
     LiveData<List<NewsDetail>> savedNews;
+    private NewsDao newsDao;
 
     public NewsDataRepository(Application application) {
         this.apiInterface = RetrofitApiClient.getInstance().create(ApiInterface.class);
@@ -37,7 +37,7 @@ public class NewsDataRepository {
         savedNews = newsDao.getAllSavedNews();
     }
 
-    public static NewsDataRepository getInstance(Application application){
+    public static NewsDataRepository getInstance(Application application) {
         if (Instance == null)
             Instance = new NewsDataRepository(application);
         return Instance;
@@ -64,12 +64,20 @@ public class NewsDataRepository {
         return data;
     }
 
-    public void insertNews(NewsDetail newsDetail){
+    public List<NewsDetail> getAllSavedNews(NewsDetail newsDetail) {
+        return newsDao.getAllSavedNews(newsDetail.getUrl());
+    }
+
+    public void insertNews(NewsDetail newsDetail) {
         new insertAsyncTask(newsDao).execute(newsDetail);
     }
 
-    public LiveData<List<NewsDetail>> getAllSavedNews(){
+    public LiveData<List<NewsDetail>> getAllSavedNews() {
         return savedNews;
+    }
+
+    public void deleteNews(NewsDetail newsDetail) {
+        new deleteAsyncTask(newsDao).execute(newsDetail);
     }
 
     private static class insertAsyncTask extends AsyncTask<NewsDetail, Void, Void> {
@@ -83,6 +91,21 @@ public class NewsDataRepository {
         @Override
         protected Void doInBackground(final NewsDetail... params) {
             mAsyncTaskDao.insert(params[0]);
+            return null;
+        }
+    }
+
+    private static class deleteAsyncTask extends AsyncTask<NewsDetail, Void, Void> {
+
+        private NewsDao mAsyncTaskDao;
+
+        deleteAsyncTask(NewsDao dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final NewsDetail... params) {
+            mAsyncTaskDao.delete(params[0]);
             return null;
         }
     }

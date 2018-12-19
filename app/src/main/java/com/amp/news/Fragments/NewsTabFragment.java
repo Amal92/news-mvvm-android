@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 
 import com.amp.news.Adapters.NewsListAdapter;
 import com.amp.news.ApiResponsePojo.NewsApiResponse;
+import com.amp.news.Models.NewsDetail;
 import com.amp.news.R;
 import com.amp.news.ViewModels.NewsViewModel;
 
@@ -54,7 +55,7 @@ public class NewsTabFragment extends Fragment {
         ButterKnife.bind(this, view);
         setUpRecyclerView();
         String category = getArguments().getString("category");
-        newsViewModel = ViewModelProviders.of(this).get(NewsViewModel.class);
+        newsViewModel = ViewModelProviders.of(getActivity()).get(NewsViewModel.class);
         if (category.equals("latest"))
             category = null;
         newsViewModel.getNews(category).observe(this, new Observer<NewsApiResponse>() {
@@ -62,6 +63,13 @@ public class NewsTabFragment extends Fragment {
             public void onChanged(@Nullable NewsApiResponse newsApiResponse) {
                 if (newsApiResponse != null)
                     newsListAdapter.setDataList(newsApiResponse.getNewsDetails());
+            }
+        });
+
+        newsViewModel.getDeletedNewsArticle().observe(this, new Observer<NewsDetail>() {
+            @Override
+            public void onChanged(@Nullable NewsDetail newsDetail) {
+                newsListAdapter.removeBookmark(newsDetail);
             }
         });
 

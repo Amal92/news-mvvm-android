@@ -2,6 +2,7 @@ package com.amp.news.Adapters;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
@@ -47,8 +48,8 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.MyView
     }
 
     @Override
-    public void onBindViewHolder(NewsListAdapter.MyViewHolder holder, int position) {
-        NewsDetail newsDetail = newsDetails.get(position);
+    public void onBindViewHolder(final NewsListAdapter.MyViewHolder holder, int position) {
+        final NewsDetail newsDetail = newsDetails.get(position);
         holder.title_tv.setText(newsDetail.getTitle());
         holder.description_tv.setText(newsDetail.getDescription());
         holder.source_tv.setText(newsDetail.getSource().getName());
@@ -56,6 +57,15 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.MyView
         String datetimeString = (String) DateUtils.getRelativeTimeSpanString(dateTime.getMillis(), System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS);
         holder.time_tv.setText(datetimeString);
         Glide.with(context).load(newsDetail.getUrlToImage()).into(holder.image_iv);
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                if (newsViewModel.checkIfNewsExists(newsDetail))
+                    holder.bookmark_button.setImageResource(R.drawable.bookmark);
+                else holder.bookmark_button.setImageResource(R.drawable.bookmark_outline);
+            }
+        });
+
     }
 
     @Override
@@ -69,6 +79,16 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.MyView
         this.newsDetails = newsDetails;
         notifyDataSetChanged();
     }
+
+    public void removeBookmark(NewsDetail newsDetail) {
+        for (int i = 0; i < getItemCount(); i++) {
+            if (newsDetails.get(i).getUrl().equals(newsDetail.getUrl())) {
+                notifyItemChanged(i);
+                break;
+            }
+        }
+    }
+
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
@@ -96,7 +116,16 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.MyView
             bookmark_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    newsViewModel.insertArticle(newsDetails.get(getAdapterPosition()));
+                    if (bookmark_button.getDrawable().getConstantState() == context.getResources().getDrawable(R.drawable.bookmark).getConstantState()) {
+                        // delete
+                        bookmark_button.setImageResource(R.drawable.bookmark_outline);
+                        newsViewModel.deleteArticle(newsDetails.get(getAdapterPosition()));
+                    } else {
+                        //insert
+                        bookmark_button.setImageResource(R.drawable.bookmark);
+                        newsViewModel.insertArticle(newsDetails.get(getAdapterPosition()));
+                    }
+
                 }
             });
         }
