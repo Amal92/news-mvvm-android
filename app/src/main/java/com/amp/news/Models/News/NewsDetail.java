@@ -1,4 +1,4 @@
-package com.amp.news.Models;
+package com.amp.news.Models.News;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Embedded;

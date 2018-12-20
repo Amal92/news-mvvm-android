@@ -7,7 +7,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
 import com.amp.news.ApiResponsePojo.NewsApiResponse;
-import com.amp.news.Models.NewsDetail;
+import com.amp.news.Models.News.NewsDetail;
 import com.amp.news.Repository.NewsDataRepository;
 
 import java.util.List;

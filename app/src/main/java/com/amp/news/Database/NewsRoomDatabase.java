@@ -5,7 +5,7 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
-import com.amp.news.Models.NewsDetail;
+import com.amp.news.Models.News.NewsDetail;
 
 /**
  * Created by amal on 19/12/18.

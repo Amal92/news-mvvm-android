@@ -9,13 +9,12 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.amp.news.Adapters.NewsListAdapter;
-import com.amp.news.Models.NewsDetail;
+import com.amp.news.Models.News.NewsDetail;
 import com.amp.news.R;
 import com.amp.news.ViewModels.NewsViewModel;
 

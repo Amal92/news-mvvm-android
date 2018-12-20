@@ -1,7 +1,7 @@
 package com.amp.news.ApiResponsePojo;
 
 
-import com.amp.news.Models.NewsDetail;
+import com.amp.news.Models.News.NewsDetail;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;

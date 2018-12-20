@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 
 import com.amp.news.Adapters.NewsListAdapter;
 import com.amp.news.ApiResponsePojo.NewsApiResponse;
-import com.amp.news.Models.NewsDetail;
+import com.amp.news.Models.News.NewsDetail;
 import com.amp.news.R;
 import com.amp.news.ViewModels.NewsViewModel;
 

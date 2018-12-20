@@ -8,7 +8,7 @@ import android.os.AsyncTask;
 import com.amp.news.ApiResponsePojo.NewsApiResponse;
 import com.amp.news.Database.NewsDao;
 import com.amp.news.Database.NewsRoomDatabase;
-import com.amp.news.Models.NewsDetail;
+import com.amp.news.Models.News.NewsDetail;
 import com.amp.news.Networking.ApiInterface;
 import com.amp.news.Networking.RetrofitApiClient;
 import com.amp.news.Utils.Const;

@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.amp.news.Models.NewsDetail;
+import com.amp.news.Models.News.NewsDetail;
 import com.amp.news.R;
 import com.amp.news.ViewModels.NewsViewModel;
 import com.bumptech.glide.Glide;

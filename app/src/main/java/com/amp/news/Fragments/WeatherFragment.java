@@ -2,18 +2,23 @@ package com.amp.news.Fragments;
 
 
 import android.Manifest;
-import android.annotation.SuppressLint;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.amp.news.Models.Weather.WeatherDetail;
 import com.amp.news.R;
+import com.amp.news.Utils.CustomInfoWindow;
+import com.amp.news.ViewModels.WeatherViewModel;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -22,8 +27,9 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.gson.Gson;
 
 
 /**
@@ -34,6 +40,8 @@ public class WeatherFragment extends Fragment implements OnMapReadyCallback {
     private static final int REQUEST_LOCATION = 123;
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
+    private WeatherViewModel weatherViewModel;
+    private Marker chennaiMarker, mumbaiMarker, delhiMarker, kolkataMarker, currentMarker;
 
     public WeatherFragment() {
         // Required empty public constructor
@@ -48,7 +56,7 @@ public class WeatherFragment extends Fragment implements OnMapReadyCallback {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_weather, container, false);
-
+        weatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel.class);
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -66,7 +74,7 @@ public class WeatherFragment extends Fragment implements OnMapReadyCallback {
 
         } else {
             // already permission granted
-            getLastKnownLocation();
+            getLastKnownLocationObserver();
         }
     }
 
@@ -76,41 +84,89 @@ public class WeatherFragment extends Fragment implements OnMapReadyCallback {
         if (requestCode == REQUEST_LOCATION) {
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getLastKnownLocation();
+                getLastKnownLocationObserver();
             }
         }
     }
 
-    @SuppressLint("MissingPermission")
-    private void getLastKnownLocation() {
-        mFusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+    private void getLastKnownLocationObserver() {
+        weatherViewModel.getCurrentLocation().observe(this, new Observer<Location>() {
             @Override
-            public void onSuccess(Location location) {
-                mMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).title("Marker in current location")
+            public void onChanged(@Nullable Location location) {
+                currentMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude()))
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
+                setUpCurrentLocationWeatherDataObserver(location.getLatitude(), location.getLongitude());
+                setUpCurrentCityNameObserver(location.getLatitude(), location.getLongitude());
             }
         });
     }
 
+    private void setUpCurrentCityNameObserver(double latitude, double longitude) {
+        weatherViewModel.getCurrentCityName(latitude, longitude).observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String s) {
+                currentMarker.setTitle(s);
+            }
+        });
+    }
+
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setInfoWindowAdapter(new CustomInfoWindow(getActivity()));
         checkPermission();
-        final LatLng INDIA = new LatLng(21.7679, 78.8718);
-        final LatLng DELHI = new LatLng(28.644800, 77.216721);
-        final LatLng KOLKATA = new LatLng(22.572645, 88.363892);
-        final LatLng MUMBAI = new LatLng(19.0760, 72.8777);
-        final LatLng CHENNAI = new LatLng(13.0827, 80.2707);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(INDIA, 4.5f));
-        mMap.addMarker(new MarkerOptions().position(DELHI).title("Marker in delhi")
+
+        // Move camera to India and set it to whole India zoom
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(weatherViewModel.INDIA, 4.6f));
+        // Set marker on different location
+        delhiMarker = mMap.addMarker(new MarkerOptions().position(weatherViewModel.DELHI).title("Delhi")
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-        mMap.addMarker(new MarkerOptions().position(KOLKATA).title("Marker in kolkata")
+        kolkataMarker = mMap.addMarker(new MarkerOptions().position(weatherViewModel.KOLKATA).title("Kolkata")
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
-        mMap.addMarker(new MarkerOptions().position(MUMBAI).title("Marker in mumbai")
+        mumbaiMarker = mMap.addMarker(new MarkerOptions().position(weatherViewModel.MUMBAI).title("Mumbai")
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-        mMap.addMarker(new MarkerOptions().position(CHENNAI).title("Marker in chennai")
+        chennaiMarker = mMap.addMarker(new MarkerOptions().position(weatherViewModel.CHENNAI).title("Chennai")
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 
+        setUpWeatherDataObservers();
+
+    }
+
+    private void setUpWeatherDataObservers() {
+        weatherViewModel.getChennaiWeatherLiveData().observe(this, new Observer<WeatherDetail>() {
+            @Override
+            public void onChanged(@Nullable WeatherDetail weatherDetail) {
+                chennaiMarker.setSnippet(new Gson().toJson(weatherDetail));
+            }
+        });
+        weatherViewModel.getDelhiWeatherLiveData().observe(this, new Observer<WeatherDetail>() {
+            @Override
+            public void onChanged(@Nullable WeatherDetail weatherDetail) {
+                delhiMarker.setSnippet(new Gson().toJson(weatherDetail));
+            }
+        });
+        weatherViewModel.getKolkataWeatherLiveData().observe(this, new Observer<WeatherDetail>() {
+            @Override
+            public void onChanged(@Nullable WeatherDetail weatherDetail) {
+                kolkataMarker.setSnippet(new Gson().toJson(weatherDetail));
+            }
+        });
+        weatherViewModel.getMumbaiWeatherLiveData().observe(this, new Observer<WeatherDetail>() {
+            @Override
+            public void onChanged(@Nullable WeatherDetail weatherDetail) {
+                mumbaiMarker.setSnippet(new Gson().toJson(weatherDetail));
+            }
+        });
+    }
+
+    private void setUpCurrentLocationWeatherDataObserver(double latitude, double longitude) {
+        weatherViewModel.getCurrentLocationWeatherLiveData(latitude, longitude).observe(this, new Observer<WeatherDetail>() {
+            @Override
+            public void onChanged(@Nullable WeatherDetail weatherDetail) {
+                currentMarker.setSnippet(new Gson().toJson(weatherDetail));
+            }
+        });
     }
 
 

@@ -7,7 +7,7 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
-import com.amp.news.Models.NewsDetail;
+import com.amp.news.Models.News.NewsDetail;
 
 import java.util.List;
 
