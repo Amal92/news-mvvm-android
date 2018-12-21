@@ -3,6 +3,7 @@ package com.amp.news.Fragments;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.arch.paging.PagedList;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.amp.news.Adapters.NewsListAdapter;
-import com.amp.news.ApiResponsePojo.NewsApiResponse;
 import com.amp.news.Models.News.NewsDetail;
 import com.amp.news.R;
 import com.amp.news.ViewModels.NewsViewModel;
@@ -58,18 +58,25 @@ public class NewsTabFragment extends Fragment {
         newsViewModel = ViewModelProviders.of(getActivity()).get(NewsViewModel.class);
         if (category.equals("latest"))
             category = null;
-        newsViewModel.getNews(category).observe(this, new Observer<NewsApiResponse>() {
+        /*newsViewModel.getNews(category).observe(this, new Observer<NewsApiResponse>() {
             @Override
             public void onChanged(@Nullable NewsApiResponse newsApiResponse) {
                 if (newsApiResponse != null)
                     newsListAdapter.setDataList(newsApiResponse.getNewsDetails());
+            }
+        });*/
+
+        newsViewModel.getNews(category).observe(this, new Observer<PagedList<NewsDetail>>() {
+            @Override
+            public void onChanged(@Nullable PagedList<NewsDetail> newsDetails) {
+                newsListAdapter.submitList(newsDetails);
             }
         });
 
         newsViewModel.getDeletedNewsArticle().observe(this, new Observer<NewsDetail>() {
             @Override
             public void onChanged(@Nullable NewsDetail newsDetail) {
-                newsListAdapter.removeBookmark(newsDetail);
+                // newsListAdapter.removeBookmark(newsDetail);
             }
         });
 

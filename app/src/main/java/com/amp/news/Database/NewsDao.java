@@ -1,6 +1,6 @@
 package com.amp.news.Database;
 
-import android.arch.lifecycle.LiveData;
+import android.arch.paging.DataSource;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
@@ -22,7 +22,7 @@ public interface NewsDao {
     void insert(NewsDetail newsDetail);
 
     @Query("SELECT * from news_table")
-    LiveData<List<NewsDetail>> getAllSavedNews();
+    DataSource.Factory<Integer, NewsDetail> getAllSavedNews();
 
     @Delete
     void delete(NewsDetail newsDetail);

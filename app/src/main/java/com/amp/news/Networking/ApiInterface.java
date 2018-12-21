@@ -15,9 +15,12 @@ import retrofit2.http.Query;
 public interface ApiInterface {
 
     @GET("top-headlines")
-    Call<NewsApiResponse> getAllNews(@Query("category") String category, @Query("apiKey") String apiKey, @Query("sources") String source);
+    Call<NewsApiResponse> getAllNews(@Query("category") String category, @Query("apiKey") String apiKey,
+                                     @Query("sources") String source, @Query("pageSize") int pageSize,
+                                     @Query("page") int page);
 
     @GET("weather?units=metric")
-    Call<WeatherDetail> getWeatherInfo(@Query("lat") double latitude, @Query("lon") double longitude, @Query("appid") String apiKey);
+    Call<WeatherDetail> getWeatherInfo(@Query("lat") double latitude, @Query("lon") double longitude,
+                                       @Query("appid") String apiKey);
 
 }

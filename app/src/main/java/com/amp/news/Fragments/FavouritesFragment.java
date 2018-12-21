@@ -3,6 +3,7 @@ package com.amp.news.Fragments;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.arch.paging.PagedList;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,8 +18,6 @@ import com.amp.news.Adapters.NewsListAdapter;
 import com.amp.news.Models.News.NewsDetail;
 import com.amp.news.R;
 import com.amp.news.ViewModels.NewsViewModel;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -53,10 +52,16 @@ public class FavouritesFragment extends Fragment {
         setUpRecyclerView();
 
         newsViewModel = ViewModelProviders.of(this).get(NewsViewModel.class);
-        newsViewModel.getSavedNews().observe(this, new Observer<List<NewsDetail>>() {
+       /* newsViewModel.getSavedNews().observe(this, new Observer<List<NewsDetail>>() {
             @Override
             public void onChanged(@Nullable List<NewsDetail> newsDetails) {
-                newsListAdapter.setDataList(newsDetails);
+               // newsListAdapter.submitList(newsDetails);
+            }
+        });*/
+        newsViewModel.getSavedNews().observe(this, new Observer<PagedList<NewsDetail>>() {
+            @Override
+            public void onChanged(@Nullable PagedList<NewsDetail> newsDetails) {
+                newsListAdapter.submitList(newsDetails);
             }
         });
 

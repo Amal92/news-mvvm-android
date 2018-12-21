@@ -2,22 +2,17 @@ package com.amp.news.Repository;
 
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
+import android.arch.paging.LivePagedListBuilder;
+import android.arch.paging.PagedList;
 import android.os.AsyncTask;
 
-import com.amp.news.ApiResponsePojo.NewsApiResponse;
 import com.amp.news.Database.NewsDao;
 import com.amp.news.Database.NewsRoomDatabase;
 import com.amp.news.Models.News.NewsDetail;
 import com.amp.news.Networking.ApiInterface;
 import com.amp.news.Networking.RetrofitApiClient;
-import com.amp.news.Utils.Const;
 
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * Created by amal on 18/12/18.
@@ -26,15 +21,19 @@ import retrofit2.Response;
 public class NewsDataRepository {
 
     private static NewsDataRepository Instance = null;
-    ApiInterface apiInterface;
-    LiveData<List<NewsDetail>> savedNews;
+    private ApiInterface apiInterface;
+    LiveData<PagedList<NewsDetail>> savedNews;
     private NewsDao newsDao;
 
     public NewsDataRepository(Application application) {
         this.apiInterface = RetrofitApiClient.getInstance().create(ApiInterface.class);
         NewsRoomDatabase db = NewsRoomDatabase.getDatabase(application);
         newsDao = db.wordDao();
-        savedNews = newsDao.getAllSavedNews();
+        PagedList.Config pagedListConfig =
+                (new PagedList.Config.Builder()).setEnablePlaceholders(true)
+                        .setPageSize(20).build();
+        savedNews = (new LivePagedListBuilder(newsDao.getAllSavedNews(), pagedListConfig))
+                .build();
     }
 
     public static NewsDataRepository getInstance(Application application) {
@@ -43,7 +42,7 @@ public class NewsDataRepository {
         return Instance;
     }
 
-    public LiveData<NewsApiResponse> getNews(String category) {
+   /* public LiveData<NewsApiResponse> getNews(String category) {
         final MutableLiveData<NewsApiResponse> data = new MutableLiveData<>();
 
         Call<NewsApiResponse> call;
@@ -62,7 +61,7 @@ public class NewsDataRepository {
             }
         });
         return data;
-    }
+    }*/
 
     public List<NewsDetail> getAllSavedNews(NewsDetail newsDetail) {
         return newsDao.getAllSavedNews(newsDetail.getUrl());
@@ -72,7 +71,7 @@ public class NewsDataRepository {
         new insertAsyncTask(newsDao).execute(newsDetail);
     }
 
-    public LiveData<List<NewsDetail>> getAllSavedNews() {
+    public LiveData<PagedList<NewsDetail>> getAllSavedNews() {
         return savedNews;
     }
 
