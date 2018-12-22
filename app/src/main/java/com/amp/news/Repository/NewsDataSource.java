@@ -1,5 +1,6 @@
 package com.amp.news.Repository;
 
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.paging.PageKeyedDataSource;
 import android.support.annotation.NonNull;
 
@@ -24,10 +25,12 @@ public class NewsDataSource extends PageKeyedDataSource<Integer, NewsDetail> {
     private static final int FIRST_PAGE = 1;
     private ApiInterface apiInterface;
     private String category;
+    private MutableLiveData<Boolean> isLoading;
 
-    public NewsDataSource(String category) {
+    public NewsDataSource(String category, MutableLiveData<Boolean> isLoading) {
         this.category = category;
         this.apiInterface = RetrofitApiClient.getInstance().create(ApiInterface.class);
+        this.isLoading = isLoading;
     }
 
     @Override
@@ -36,16 +39,18 @@ public class NewsDataSource extends PageKeyedDataSource<Integer, NewsDetail> {
         if (category == null)
             call = apiInterface.getAllNews(null, Const.API_KEY, "google-news", PAGE_SIZE, FIRST_PAGE);
         else call = apiInterface.getAllNews(category, Const.API_KEY, null, PAGE_SIZE, FIRST_PAGE);
+        isLoading.postValue(true);
         call.enqueue(new Callback<NewsApiResponse>() {
             @Override
             public void onResponse(Call<NewsApiResponse> call, Response<NewsApiResponse> response) {
                 if (response.body() != null)
                     callback.onResult(response.body().getNewsDetails(), null, FIRST_PAGE + 1);
+                    isLoading.postValue(false);
             }
 
             @Override
             public void onFailure(Call<NewsApiResponse> call, Throwable t) {
-
+                isLoading.postValue(false);
             }
         });
 
@@ -57,6 +62,7 @@ public class NewsDataSource extends PageKeyedDataSource<Integer, NewsDetail> {
         if (category == null)
             call = apiInterface.getAllNews(null, Const.API_KEY, "google-news", PAGE_SIZE, params.key);
         else call = apiInterface.getAllNews(category, Const.API_KEY, null, PAGE_SIZE, params.key);
+        isLoading.postValue(true);
         call.enqueue(new Callback<NewsApiResponse>() {
             @Override
             public void onResponse(Call<NewsApiResponse> call, Response<NewsApiResponse> response) {
@@ -67,11 +73,12 @@ public class NewsDataSource extends PageKeyedDataSource<Integer, NewsDetail> {
                     //and the previous page key
                     callback.onResult(response.body().getNewsDetails(), adjacentKey);
                 }
+                isLoading.postValue(false);
             }
 
             @Override
             public void onFailure(Call<NewsApiResponse> call, Throwable t) {
-
+                isLoading.postValue(false);
             }
         });
     }
@@ -82,6 +89,7 @@ public class NewsDataSource extends PageKeyedDataSource<Integer, NewsDetail> {
         if (category == null)
             call = apiInterface.getAllNews(null, Const.API_KEY, "google-news", PAGE_SIZE, params.key);
         else call = apiInterface.getAllNews(category, Const.API_KEY, null, PAGE_SIZE, params.key);
+        isLoading.postValue(true);
         call.enqueue(new Callback<NewsApiResponse>() {
             @Override
             public void onResponse(Call<NewsApiResponse> call, Response<NewsApiResponse> response) {
@@ -96,11 +104,12 @@ public class NewsDataSource extends PageKeyedDataSource<Integer, NewsDetail> {
                     //passing the loaded data and next page value
                     callback.onResult(response.body().getNewsDetails(), key);
                 }
+                isLoading.postValue(false);
             }
 
             @Override
             public void onFailure(Call<NewsApiResponse> call, Throwable t) {
-
+                isLoading.postValue(false);
             }
         });
     }

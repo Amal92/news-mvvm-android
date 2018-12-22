@@ -21,6 +21,8 @@ import com.bumptech.glide.Glide;
 
 import org.joda.time.DateTime;
 
+import java.util.ListIterator;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -43,7 +45,6 @@ public class NewsListAdapter extends PagedListAdapter<NewsDetail, NewsListAdapte
                 }
             };
     private LayoutInflater mInflater;
-    //  private List<NewsDetail> newsDetails;
     private Context context;
     private NewsViewModel newsViewModel;
 
@@ -82,26 +83,20 @@ public class NewsListAdapter extends PagedListAdapter<NewsDetail, NewsListAdapte
         }
     }
 
-    /*@Override
-    public int getItemCount() {
-        if (newsDetails != null)
-            return newsDetails.size();
-        else return 0;
-    }*/
-
-    /*public void setDataList(List<NewsDetail> newsDetails) {
-        this.newsDetails = newsDetails;
-        notifyDataSetChanged();
-    }
-
     public void removeBookmark(NewsDetail newsDetail) {
-        for (int i = 0; i < getItemCount(); i++) {
-            if (newsDetails.get(i).getUrl().equals(newsDetail.getUrl())) {
-                notifyItemChanged(i);
-                break;
+
+        if (getCurrentList() != null) {
+            ListIterator iterator = getCurrentList().listIterator();
+            while (iterator.hasNext()) {
+                NewsDetail newsDetail1 = (NewsDetail) iterator.next();
+                if (newsDetail1.getUrl().equals(newsDetail.getUrl())) {
+                    int index = iterator.nextIndex();
+                    notifyItemChanged(index - 1);
+                    break;
+                }
             }
         }
-    }*/
+    }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 

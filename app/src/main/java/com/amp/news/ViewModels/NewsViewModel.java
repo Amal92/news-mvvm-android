@@ -25,6 +25,7 @@ public class NewsViewModel extends AndroidViewModel {
     private NewsDataRepository newsDataRepository;
     private LiveData<PagedList<NewsDetail>> savedNews;
     private MutableLiveData<NewsDetail> deletedNewsArticle;
+    private MutableLiveData<Boolean> isLoading;
 
     LiveData<PagedList<NewsDetail>> itemPagedList;
     LiveData<PageKeyedDataSource<Integer, NewsDetail>> liveDataSource;
@@ -34,15 +35,11 @@ public class NewsViewModel extends AndroidViewModel {
         newsDataRepository = NewsDataRepository.getInstance(application);
         savedNews = newsDataRepository.getAllSavedNews();
         deletedNewsArticle = new MutableLiveData<>();
+        isLoading = new MutableLiveData<>();
     }
 
-   /* public LiveData<NewsApiResponse> getNews(String category) {
-        newsApiResponseLiveData = newsDataRepository.getNews(category);
-        return newsApiResponseLiveData;
-    }*/
-
     public LiveData<PagedList<NewsDetail>> getNews(String category) {
-        NewsDataSourceFactory newsDataSourceFactory = new NewsDataSourceFactory(category);
+        NewsDataSourceFactory newsDataSourceFactory = new NewsDataSourceFactory(category, isLoading);
         liveDataSource = newsDataSourceFactory.getNewsLiveDataSource();
         PagedList.Config pagedListConfig =
                 (new PagedList.Config.Builder())
@@ -77,6 +74,10 @@ public class NewsViewModel extends AndroidViewModel {
 
     public MutableLiveData<NewsDetail> getDeletedNewsArticle(){
         return deletedNewsArticle;
+    }
+
+    public MutableLiveData<Boolean> getIsLoading(){
+        return isLoading;
     }
 
 

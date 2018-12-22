@@ -42,27 +42,6 @@ public class NewsDataRepository {
         return Instance;
     }
 
-   /* public LiveData<NewsApiResponse> getNews(String category) {
-        final MutableLiveData<NewsApiResponse> data = new MutableLiveData<>();
-
-        Call<NewsApiResponse> call;
-        if (category == null)
-            call = apiInterface.getAllNews(null, Const.API_KEY, "google-news");
-        else call = apiInterface.getAllNews(category, Const.API_KEY, null);
-        call.enqueue(new Callback<NewsApiResponse>() {
-            @Override
-            public void onResponse(Call<NewsApiResponse> call, Response<NewsApiResponse> response) {
-                data.setValue(response.body());
-            }
-
-            @Override
-            public void onFailure(Call<NewsApiResponse> call, Throwable t) {
-
-            }
-        });
-        return data;
-    }*/
-
     public List<NewsDetail> getAllSavedNews(NewsDetail newsDetail) {
         return newsDao.getAllSavedNews(newsDetail.getUrl());
     }

@@ -14,14 +14,16 @@ public class NewsDataSourceFactory extends DataSource.Factory<Integer, NewsDetai
 
     private MutableLiveData<PageKeyedDataSource<Integer, NewsDetail>> newsLiveDataSource = new MutableLiveData<>();
     private String category;
+    private MutableLiveData<Boolean> isLoading;
 
-    public NewsDataSourceFactory(String category) {
+    public NewsDataSourceFactory(String category, MutableLiveData<Boolean> isLoading) {
+        this.isLoading = isLoading;
         this.category = category;
     }
 
     @Override
     public DataSource<Integer, NewsDetail> create() {
-        NewsDataSource newsDataSource = new NewsDataSource(category);
+        NewsDataSource newsDataSource = new NewsDataSource(category, isLoading);
         newsLiveDataSource.postValue(newsDataSource);
         return newsDataSource;
     }

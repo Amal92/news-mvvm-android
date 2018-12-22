@@ -13,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.amp.news.Adapters.NewsListAdapter;
 import com.amp.news.Models.News.NewsDetail;
@@ -30,6 +31,9 @@ public class NewsTabFragment extends Fragment {
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
+
+    @BindView(R.id.progress)
+    ProgressBar progress;
 
     private NewsListAdapter newsListAdapter;
     private NewsViewModel newsViewModel;
@@ -58,13 +62,6 @@ public class NewsTabFragment extends Fragment {
         newsViewModel = ViewModelProviders.of(getActivity()).get(NewsViewModel.class);
         if (category.equals("latest"))
             category = null;
-        /*newsViewModel.getNews(category).observe(this, new Observer<NewsApiResponse>() {
-            @Override
-            public void onChanged(@Nullable NewsApiResponse newsApiResponse) {
-                if (newsApiResponse != null)
-                    newsListAdapter.setDataList(newsApiResponse.getNewsDetails());
-            }
-        });*/
 
         newsViewModel.getNews(category).observe(this, new Observer<PagedList<NewsDetail>>() {
             @Override
@@ -76,7 +73,19 @@ public class NewsTabFragment extends Fragment {
         newsViewModel.getDeletedNewsArticle().observe(this, new Observer<NewsDetail>() {
             @Override
             public void onChanged(@Nullable NewsDetail newsDetail) {
-                // newsListAdapter.removeBookmark(newsDetail);
+                newsListAdapter.removeBookmark(newsDetail);
+            }
+        });
+
+        newsViewModel.getIsLoading().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(@Nullable Boolean aBoolean) {
+                if (aBoolean != null)
+                    if (!aBoolean)
+                        progress.setVisibility(View.GONE);
+                    else if (newsListAdapter.getItemCount() == 0) {
+                        progress.setVisibility(View.VISIBLE);
+                    }
             }
         });
 
