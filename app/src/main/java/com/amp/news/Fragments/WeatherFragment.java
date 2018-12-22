@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +20,6 @@ import com.amp.news.Models.Weather.WeatherDetail;
 import com.amp.news.R;
 import com.amp.news.Utils.CustomInfoWindow;
 import com.amp.news.ViewModels.WeatherViewModel;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -31,6 +30,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -39,7 +41,6 @@ public class WeatherFragment extends Fragment implements OnMapReadyCallback {
 
     private static final int REQUEST_LOCATION = 123;
     private GoogleMap mMap;
-    private FusedLocationProviderClient mFusedLocationClient;
     private WeatherViewModel weatherViewModel;
     private Marker chennaiMarker, mumbaiMarker, delhiMarker, kolkataMarker, currentMarker;
 
@@ -56,11 +57,11 @@ public class WeatherFragment extends Fragment implements OnMapReadyCallback {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_weather, container, false);
+
         weatherViewModel = ViewModelProviders.of(this).get(WeatherViewModel.class);
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
         return view;
     }
 
@@ -74,7 +75,7 @@ public class WeatherFragment extends Fragment implements OnMapReadyCallback {
 
         } else {
             // already permission granted
-            getLastKnownLocationObserver();
+            weatherViewModel.getCurrentLocation();
         }
     }
 
@@ -84,32 +85,10 @@ public class WeatherFragment extends Fragment implements OnMapReadyCallback {
         if (requestCode == REQUEST_LOCATION) {
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getLastKnownLocationObserver();
+                weatherViewModel.getCurrentLocation();
             }
         }
     }
-
-    private void getLastKnownLocationObserver() {
-        weatherViewModel.getCurrentLocation().observe(this, new Observer<Location>() {
-            @Override
-            public void onChanged(@Nullable Location location) {
-                currentMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude()))
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
-                setUpCurrentLocationWeatherDataObserver(location.getLatitude(), location.getLongitude());
-                setUpCurrentCityNameObserver(location.getLatitude(), location.getLongitude());
-            }
-        });
-    }
-
-    private void setUpCurrentCityNameObserver(double latitude, double longitude) {
-        weatherViewModel.getCurrentCityName(latitude, longitude).observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                currentMarker.setTitle(s);
-            }
-        });
-    }
-
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -129,11 +108,11 @@ public class WeatherFragment extends Fragment implements OnMapReadyCallback {
         chennaiMarker = mMap.addMarker(new MarkerOptions().position(weatherViewModel.CHENNAI).title("Chennai")
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 
-        setUpWeatherDataObservers();
+        setUpDataObservers();
 
     }
 
-    private void setUpWeatherDataObservers() {
+    private void setUpDataObservers() {
         weatherViewModel.getChennaiWeatherLiveData().observe(this, new Observer<WeatherDetail>() {
             @Override
             public void onChanged(@Nullable WeatherDetail weatherDetail) {
@@ -158,16 +137,28 @@ public class WeatherFragment extends Fragment implements OnMapReadyCallback {
                 mumbaiMarker.setSnippet(new Gson().toJson(weatherDetail));
             }
         });
-    }
-
-    private void setUpCurrentLocationWeatherDataObserver(double latitude, double longitude) {
-        weatherViewModel.getCurrentLocationWeatherLiveData(latitude, longitude).observe(this, new Observer<WeatherDetail>() {
+        weatherViewModel.getCurrentLocationObserver().observe(this, new Observer<Location>() {
+            @Override
+            public void onChanged(@Nullable Location location) {
+                currentMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude()))
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
+                weatherViewModel.getCurrentLocationWeatherInfo();
+                weatherViewModel.getCurrentCityName();
+            }
+        });
+        weatherViewModel.getCurrentLocationWeatherLiveData().observe(this, new Observer<WeatherDetail>() {
             @Override
             public void onChanged(@Nullable WeatherDetail weatherDetail) {
                 currentMarker.setSnippet(new Gson().toJson(weatherDetail));
             }
         });
-    }
+        weatherViewModel.getCurrentCityNameObservers().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String s) {
+                currentMarker.setTitle(s);
+            }
+        });
 
+    }
 
 }

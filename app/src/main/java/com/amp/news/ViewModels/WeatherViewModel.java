@@ -3,8 +3,12 @@ package com.amp.news.ViewModels;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MediatorLiveData;
+import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Observer;
 import android.location.Location;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.amp.news.Models.Weather.WeatherDetail;
 import com.amp.news.Repository.WeatherDataRepository;
@@ -28,7 +32,9 @@ public class WeatherViewModel extends AndroidViewModel {
     private LiveData<WeatherDetail> kolkataWeatherLiveData;
     private LiveData<WeatherDetail> mumbaiWeatherLiveData;
     private LiveData<WeatherDetail> delhiWeatherLiveData;
-    private LiveData<Location> currentLocation;
+    private MediatorLiveData<WeatherDetail> currentLocationWeatherLiveData = new MediatorLiveData<>();
+    private MutableLiveData<Location> currentLocationLiveData = new MutableLiveData<>();
+    private MutableLiveData<String> currentLocationCityName = new MutableLiveData<>();
 
     public WeatherViewModel(@NonNull Application application) {
         super(application);
@@ -56,16 +62,35 @@ public class WeatherViewModel extends AndroidViewModel {
         return delhiWeatherLiveData;
     }
 
-    public LiveData<WeatherDetail> getCurrentLocationWeatherLiveData(double latitude, double longitude) {
-        return weatherDataRepository.getWeatherInfo(latitude, longitude);
+    public MutableLiveData<Location> getCurrentLocationObserver() {
+        return currentLocationLiveData;
     }
 
-    public LiveData<Location> getCurrentLocation() {
-        return weatherDataRepository.getLastKnowLocation();
+    public MediatorLiveData<WeatherDetail> getCurrentLocationWeatherLiveData() {
+        return currentLocationWeatherLiveData;
     }
 
-    public LiveData<String> getCurrentCityName(double latitude, double longitude) {
-        return weatherDataRepository.getCurrentCityName(latitude, longitude);
+    public void getCurrentLocation() {
+        currentLocationLiveData = weatherDataRepository.getLastKnowLocation();
+    }
+
+    public void getCurrentLocationWeatherInfo() {
+        Location location = currentLocationLiveData.getValue();
+        currentLocationWeatherLiveData.addSource(weatherDataRepository.getWeatherInfo(location.getLatitude(), location.getLongitude()), new Observer<WeatherDetail>() {
+            @Override
+            public void onChanged(@Nullable WeatherDetail weatherDetail) {
+                currentLocationWeatherLiveData.setValue(weatherDetail);
+            }
+        });
+    }
+
+    public MutableLiveData<String> getCurrentCityNameObservers() {
+        return currentLocationCityName;
+    }
+
+    public void getCurrentCityName() {
+        Location location = currentLocationLiveData.getValue();
+        weatherDataRepository.getCurrentCityName(location.getLatitude(), location.getLongitude(),currentLocationCityName);
     }
 
 }
