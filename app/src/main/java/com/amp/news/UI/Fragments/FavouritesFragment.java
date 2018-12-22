@@ -1,4 +1,4 @@
-package com.amp.news.Fragments;
+package com.amp.news.UI.Fragments;
 
 
 import android.arch.lifecycle.Observer;
@@ -14,7 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.amp.news.Adapters.NewsListAdapter;
+import com.amp.news.UI.Adapters.NewsListAdapter;
 import com.amp.news.Models.News.NewsDetail;
 import com.amp.news.R;
 import com.amp.news.ViewModels.NewsViewModel;

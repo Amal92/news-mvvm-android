@@ -1,4 +1,4 @@
-package com.amp.news.Adapters;
+package com.amp.news.UI.Adapters;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.arch.paging.PagedListAdapter;
@@ -16,7 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.amp.news.Activities.WebViewActivity;
+import com.amp.news.UI.Activities.WebViewActivity;
 import com.amp.news.Models.News.NewsDetail;
 import com.amp.news.R;
 import com.amp.news.ViewModels.NewsViewModel;

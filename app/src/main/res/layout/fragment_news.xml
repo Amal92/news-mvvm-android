@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.amp.news.Fragments.NewsFragment">
+    tools:context=".UI.Fragments.NewsFragment">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"

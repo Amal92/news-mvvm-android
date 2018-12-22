@@ -9,7 +9,7 @@ import android.arch.paging.PageKeyedDataSource;
 import android.arch.paging.PagedList;
 import android.support.annotation.NonNull;
 
-import com.amp.news.ApiResponsePojo.NewsApiResponse;
+import com.amp.news.Models.ApiResponsePojo.NewsApiResponse;
 import com.amp.news.Models.News.NewsDetail;
 import com.amp.news.Repository.NewsDataRepository;
 import com.amp.news.Repository.NewsDataSource;

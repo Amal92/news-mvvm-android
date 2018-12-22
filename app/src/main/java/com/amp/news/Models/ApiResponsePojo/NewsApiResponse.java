@@ -1,4 +1,4 @@
-package com.amp.news.ApiResponsePojo;
+package com.amp.news.Models.ApiResponsePojo;
 
 
 import com.amp.news.Models.News.NewsDetail;

@@ -1,7 +1,7 @@
 package com.amp.news.Networking;
 
 
-import com.amp.news.ApiResponsePojo.NewsApiResponse;
+import com.amp.news.Models.ApiResponsePojo.NewsApiResponse;
 import com.amp.news.Models.Weather.WeatherDetail;
 
 import retrofit2.Call;

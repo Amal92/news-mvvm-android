@@ -4,7 +4,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.paging.PageKeyedDataSource;
 import android.support.annotation.NonNull;
 
-import com.amp.news.ApiResponsePojo.NewsApiResponse;
+import com.amp.news.Models.ApiResponsePojo.NewsApiResponse;
 import com.amp.news.Models.News.NewsDetail;
 import com.amp.news.Networking.ApiInterface;
 import com.amp.news.Networking.RetrofitApiClient;

@@ -1,4 +1,4 @@
-package com.amp.news.Fragments;
+package com.amp.news.UI.Fragments;
 
 
 import android.os.Bundle;
