@@ -3,9 +3,11 @@ package com.amp.news.Adapters;
 import android.arch.lifecycle.ViewModelProviders;
 import android.arch.paging.PagedListAdapter;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.util.DiffUtil;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -14,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.amp.news.Activities.WebViewActivity;
 import com.amp.news.Models.News.NewsDetail;
 import com.amp.news.R;
 import com.amp.news.ViewModels.NewsViewModel;
@@ -118,6 +121,9 @@ public class NewsListAdapter extends PagedListAdapter<NewsDetail, NewsListAdapte
         @BindView(R.id.bookmark_button)
         ImageView bookmark_button;
 
+        @BindView(R.id.card_view)
+        CardView card_view;
+
         public MyViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
@@ -136,6 +142,17 @@ public class NewsListAdapter extends PagedListAdapter<NewsDetail, NewsListAdapte
 
                 }
             });
+
+            card_view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(context, WebViewActivity.class);
+                    intent.putExtra("url",getItem(getAdapterPosition()).getUrl());
+                    intent.putExtra("source",getItem(getAdapterPosition()).getSource().getName());
+                    context.startActivity(intent);
+                }
+            });
+
         }
     }
 }
