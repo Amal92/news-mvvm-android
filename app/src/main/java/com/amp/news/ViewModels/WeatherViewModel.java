@@ -71,7 +71,7 @@ public class WeatherViewModel extends AndroidViewModel {
     }
 
     public void getCurrentLocation() {
-        currentLocationLiveData = weatherDataRepository.getLastKnowLocation();
+        weatherDataRepository.getLastKnowLocation(currentLocationLiveData);
     }
 
     public void getCurrentLocationWeatherInfo() {

@@ -33,8 +33,6 @@ public class NewsDataSource extends PageKeyedDataSource<Integer, NewsDetail> {
         this.isLoading = isLoading;
     }
 
-
-
     @Override
     public void loadInitial(@NonNull LoadInitialParams<Integer> params, @NonNull final LoadInitialCallback<Integer, NewsDetail> callback) {
         Call<NewsApiResponse> call;
@@ -47,7 +45,7 @@ public class NewsDataSource extends PageKeyedDataSource<Integer, NewsDetail> {
             public void onResponse(Call<NewsApiResponse> call, Response<NewsApiResponse> response) {
                 if (response.body() != null)
                     callback.onResult(response.body().getNewsDetails(), null, FIRST_PAGE + 1);
-                    isLoading.postValue(false);
+                isLoading.postValue(false);
             }
 
             @Override

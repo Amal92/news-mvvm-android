@@ -12,11 +12,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:layout_marginBottom="4dp"
         android:orientation="horizontal">
 
         <ImageView
-            android:layout_width="14dp"
-            android:layout_height="14dp"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
             android:alpha=".87"
             app:srcCompat="@drawable/map_marker" />
 
@@ -28,12 +29,12 @@
             android:alpha=".87"
             android:fontFamily="@font/roboto"
             android:textColor="@color/white"
-            android:textSize="14sp" />
+            android:textSize="12sp" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="horizontal">
 
@@ -42,18 +43,28 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:weatherIconColor="@color/yellow"
-            app:weatherIconSize="25" />
+            app:weatherIconSize="20" />
 
         <TextView
             android:id="@+id/temp_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:fontFamily="@font/roboto_medium"
             android:textColor="@color/white"
-            android:textSize="21sp" />
+            android:textSize="16sp" />
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto_italic"
+        android:gravity="center"
+        android:text="jfjjff"
+        android:textColor="@color/white"
+        android:textSize="10sp" />
 
 
 </LinearLayout>

@@ -20,12 +20,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:background="@color/white"
+                android:paddingBottom="16dp">
 
                 <ImageView
                     android:id="@+id/poster_iv"
                     android:layout_width="match_parent"
-                    android:layout_height="170dp"
+                    android:layout_height="190dp"
                     android:scaleType="centerCrop" />
 
                 <TextView
@@ -33,25 +34,32 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
                     android:alpha=".87"
                     android:fontFamily="@font/roboto"
                     android:textColor="@color/black"
-                    android:textSize="20sp" />
+                    android:textSize="18sp" />
 
                 <TextView
                     android:id="@+id/description_tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
                     android:alpha=".60"
                     android:fontFamily="@font/roboto"
                     android:textColor="@color/black"
-                    android:textSize="16sp" />
+                    android:textSize="14sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:gravity="bottom"
                     android:orientation="horizontal">
 
                     <TextView
@@ -60,7 +68,8 @@
                         android:layout_height="wrap_content"
                         android:alpha=".70"
                         android:fontFamily="@font/roboto"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textSize="12sp" />
 
                     <TextView
                         android:id="@+id/time_tv"
@@ -69,12 +78,13 @@
                         android:layout_marginStart="8dp"
                         android:alpha=".45"
                         android:fontFamily="@font/roboto"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textSize="12sp" />
 
                     <Space
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"/>
+                        android:layout_weight="1" />
 
                     <ImageView
                         android:id="@+id/bookmark_button"

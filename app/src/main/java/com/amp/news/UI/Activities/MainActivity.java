@@ -1,19 +1,22 @@
 package com.amp.news.UI.Activities;
 
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
+import com.amp.news.BuildConfig;
+import com.amp.news.R;
 import com.amp.news.UI.Fragments.NewsFragment;
 import com.amp.news.UI.Fragments.WeatherFragment;
-import com.amp.news.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,6 +48,10 @@ public class MainActivity extends AppCompatActivity
         selectedMenuItem = R.id.nav_news_latest;
         gotoFragment(NewsFragment.newInstance("latest"));
         setTitle(getString(R.string.latest_news));
+        View headerView = navigationView.getHeaderView(0);
+        TextView version_tv = headerView.findViewById(R.id.version_tv);
+        String version = "Version " + BuildConfig.VERSION_NAME;
+        version_tv.setText(version);
     }
 
     @Override
@@ -56,9 +63,6 @@ public class MainActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
-
-
-
 
 
     @SuppressWarnings("StatementWithEmptyBody")

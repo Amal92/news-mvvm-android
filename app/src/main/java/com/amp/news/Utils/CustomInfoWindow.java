@@ -35,11 +35,13 @@ public class CustomInfoWindow implements GoogleMap.InfoWindowAdapter {
     private void renderWindowText(Marker marker, View view) {
         TextView temp_tv = view.findViewById(R.id.temp_tv);
         TextView location_tv = view.findViewById(R.id.location_tv);
+        TextView description = view.findViewById(R.id.description);
         WeatherIconView my_weather_icon = view.findViewById(R.id.my_weather_icon);
         Gson gson = new Gson();
         WeatherDetail weatherDetail = gson.fromJson(marker.getSnippet(), WeatherDetail.class);
         location_tv.setText(marker.getTitle());
         temp_tv.setText(String.format("%s°C", weatherDetail.getTemperature().getTemp()));
+        description.setText(weatherDetail.getWeatherList().get(0).getDescription());
         switch (weatherDetail.getWeatherList().get(0).getIcon()) {
             case "01d":
                 my_weather_icon.setIconResource(context.getString(R.string.wi_day_sunny));

@@ -68,19 +68,19 @@ public class WeatherDataRepository {
     }
 
     @SuppressLint("MissingPermission")
-    public MutableLiveData<Location> getLastKnowLocation() {
-        final MutableLiveData<Location> data = new MutableLiveData<>();
+    public void getLastKnowLocation(final MutableLiveData<Location> data) {
+
         mFusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(Location location) {
                 data.setValue(location);
             }
         });
-        return data;
+
     }
 
     public void getCurrentCityName(double latitude, double longitude, MutableLiveData<String> data) {
-      //  final MutableLiveData<String> data = new MutableLiveData<>();
+        //  final MutableLiveData<String> data = new MutableLiveData<>();
         new MyAsyncTask(data, geocoder).execute(latitude, longitude);
 
     }
