@@ -21,14 +21,14 @@ import com.amp.news.Repository.NewsDataSourceFactory;
 
 public class NewsViewModel extends AndroidViewModel {
 
+    LiveData<PagedList<NewsDetail>> itemPagedList;
+    LiveData<PageKeyedDataSource<Integer, NewsDetail>> liveDataSource;
+    NewsDataSourceFactory newsDataSourceFactory;
     private LiveData<NewsApiResponse> newsApiResponseLiveData;
     private NewsDataRepository newsDataRepository;
     private LiveData<PagedList<NewsDetail>> savedNews;
     private MutableLiveData<NewsDetail> deletedNewsArticle;
     private MutableLiveData<Boolean> isLoading;
-
-    LiveData<PagedList<NewsDetail>> itemPagedList;
-    LiveData<PageKeyedDataSource<Integer, NewsDetail>> liveDataSource;
 
     public NewsViewModel(@NonNull Application application) {
         super(application);
@@ -39,7 +39,7 @@ public class NewsViewModel extends AndroidViewModel {
     }
 
     public LiveData<PagedList<NewsDetail>> getNews(String category) {
-        NewsDataSourceFactory newsDataSourceFactory = new NewsDataSourceFactory(category, isLoading);
+        newsDataSourceFactory = new NewsDataSourceFactory(category, isLoading);
         liveDataSource = newsDataSourceFactory.getNewsLiveDataSource();
         PagedList.Config pagedListConfig =
                 (new PagedList.Config.Builder())
@@ -72,13 +72,16 @@ public class NewsViewModel extends AndroidViewModel {
         newsDataRepository.deleteNews(newsDetail);
     }
 
-    public MutableLiveData<NewsDetail> getDeletedNewsArticle(){
+    public MutableLiveData<NewsDetail> getDeletedNewsArticle() {
         return deletedNewsArticle;
     }
 
-    public MutableLiveData<Boolean> getIsLoading(){
+    public MutableLiveData<Boolean> getIsLoading() {
         return isLoading;
     }
 
+    public void inValidateDataSource() {
+        newsDataSourceFactory.invalidateDataSource();
+    }
 
 }

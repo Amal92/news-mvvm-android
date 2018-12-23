@@ -7,6 +7,7 @@ import android.arch.paging.PagedList;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,6 +31,7 @@ public class FavouritesFragment extends Fragment {
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
+
     private NewsViewModel newsViewModel;
     private NewsListAdapter newsListAdapter;
 
@@ -50,7 +52,6 @@ public class FavouritesFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_favourites, container, false);
         ButterKnife.bind(this, view);
         setUpRecyclerView();
-
         newsViewModel = ViewModelProviders.of(this).get(NewsViewModel.class);
        /* newsViewModel.getSavedNews().observe(this, new Observer<List<NewsDetail>>() {
             @Override

@@ -7,6 +7,7 @@ import android.arch.paging.PagedList;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,9 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
-import com.amp.news.UI.Adapters.NewsListAdapter;
 import com.amp.news.Models.News.NewsDetail;
 import com.amp.news.R;
+import com.amp.news.UI.Adapters.NewsListAdapter;
 import com.amp.news.ViewModels.NewsViewModel;
 
 import butterknife.BindView;
@@ -27,13 +28,16 @@ import butterknife.ButterKnife;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class NewsTabFragment extends Fragment {
+public class NewsTabFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
 
     @BindView(R.id.progress)
     ProgressBar progress;
+
+    @BindView(R.id.refresh_layout)
+    SwipeRefreshLayout refresh_layout;
 
     private NewsListAdapter newsListAdapter;
     private NewsViewModel newsViewModel;
@@ -58,6 +62,7 @@ public class NewsTabFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_news_tab, container, false);
         ButterKnife.bind(this, view);
         setUpRecyclerView();
+        refresh_layout.setOnRefreshListener(this);
         String category = getArguments().getString("category");
         newsViewModel = ViewModelProviders.of(getActivity()).get(NewsViewModel.class);
         if (category.equals("latest"))
@@ -66,6 +71,8 @@ public class NewsTabFragment extends Fragment {
         newsViewModel.getNews(category).observe(this, new Observer<PagedList<NewsDetail>>() {
             @Override
             public void onChanged(@Nullable PagedList<NewsDetail> newsDetails) {
+                if (refresh_layout.isRefreshing())
+                    refresh_layout.setRefreshing(false);
                 newsListAdapter.submitList(newsDetails);
             }
         });
@@ -100,4 +107,8 @@ public class NewsTabFragment extends Fragment {
         recyclerView.setAdapter(newsListAdapter);
     }
 
+    @Override
+    public void onRefresh() {
+        newsViewModel.inValidateDataSource();
+    }
 }
