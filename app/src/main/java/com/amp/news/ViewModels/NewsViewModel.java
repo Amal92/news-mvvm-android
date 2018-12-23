@@ -29,6 +29,23 @@ public class NewsViewModel extends AndroidViewModel {
     private LiveData<PagedList<NewsDetail>> savedNews;
     private MutableLiveData<NewsDetail> deletedNewsArticle;
     private MutableLiveData<Boolean> isLoading;
+    private PagedList.Callback callback = new PagedList.Callback() {
+        @Override
+        public void onChanged(int position, int count) {
+
+        }
+
+        @Override
+        public void onInserted(int position, int count) {
+
+        }
+
+        @Override
+        public void onRemoved(int position, int count) {
+
+        }
+    };
+
 
     public NewsViewModel(@NonNull Application application) {
         super(application);
@@ -80,8 +97,14 @@ public class NewsViewModel extends AndroidViewModel {
         return isLoading;
     }
 
+    /**
+     * To refresh list
+     */
     public void inValidateDataSource() {
-        newsDataSourceFactory.invalidateDataSource();
+        itemPagedList.getValue().getDataSource().invalidate();
+        // or below (both works)
+        //newsDataSourceFactory.invalidateDataSource();
+
     }
 
 }

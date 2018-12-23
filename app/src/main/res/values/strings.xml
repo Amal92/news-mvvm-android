@@ -17,4 +17,5 @@
     <string name="science_news">Science news</string>
     <string name="sports_news">Sports news</string>
     <string name="tech_news">Technology news</string>
+    <string name="no_articles_saved_yet">No articles saved yet.</string>
 </resources>

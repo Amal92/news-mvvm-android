@@ -7,17 +7,17 @@ import android.arch.paging.PagedList;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
-import com.amp.news.UI.Adapters.NewsListAdapter;
 import com.amp.news.Models.News.NewsDetail;
 import com.amp.news.R;
+import com.amp.news.UI.Adapters.NewsListAdapter;
 import com.amp.news.ViewModels.NewsViewModel;
 
 import butterknife.BindView;
@@ -32,8 +32,27 @@ public class FavouritesFragment extends Fragment {
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
 
+    @BindView(R.id.empty_tv)
+    TextView empty_tv;
+
     private NewsViewModel newsViewModel;
     private NewsListAdapter newsListAdapter;
+    private RecyclerView.AdapterDataObserver dataObserver = new RecyclerView.AdapterDataObserver() {
+        @Override
+        public void onItemRangeInserted(int positionStart, int itemCount) {
+            super.onItemRangeInserted(positionStart, itemCount);
+            if (newsListAdapter.getItemCount() > 0)
+                empty_tv.setVisibility(View.GONE);
+
+        }
+
+        @Override
+        public void onItemRangeRemoved(int positionStart, int itemCount) {
+            super.onItemRangeRemoved(positionStart, itemCount);
+            if (newsListAdapter.getItemCount() == 0)
+                empty_tv.setVisibility(View.VISIBLE);
+        }
+    };
 
     public FavouritesFragment() {
         // Required empty public constructor
@@ -53,12 +72,6 @@ public class FavouritesFragment extends Fragment {
         ButterKnife.bind(this, view);
         setUpRecyclerView();
         newsViewModel = ViewModelProviders.of(this).get(NewsViewModel.class);
-       /* newsViewModel.getSavedNews().observe(this, new Observer<List<NewsDetail>>() {
-            @Override
-            public void onChanged(@Nullable List<NewsDetail> newsDetails) {
-               // newsListAdapter.submitList(newsDetails);
-            }
-        });*/
         newsViewModel.getSavedNews().observe(this, new Observer<PagedList<NewsDetail>>() {
             @Override
             public void onChanged(@Nullable PagedList<NewsDetail> newsDetails) {
@@ -76,6 +89,12 @@ public class FavouritesFragment extends Fragment {
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(newsListAdapter);
+        newsListAdapter.registerAdapterDataObserver(dataObserver);
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        newsListAdapter.unregisterAdapterDataObserver(dataObserver);
+    }
 }
