@@ -18,6 +18,10 @@ import retrofit2.Response;
  * Created by amal on 21/12/18.
  */
 
+/**
+ * Fetches news data in chunks using pages. PageKeyedDataSource is used since we need to pass page number and
+ * page size to get value in chunks.
+ */
 public class NewsDataSource extends PageKeyedDataSource<Integer, NewsDetail> {
 
     public static final int PAGE_SIZE = 20;
@@ -33,12 +37,17 @@ public class NewsDataSource extends PageKeyedDataSource<Integer, NewsDetail> {
         this.isLoading = isLoading;
     }
 
+    /**
+     * Loads the initial page and sets the next page count.
+     * @param params
+     * @param callback
+     */
     @Override
     public void loadInitial(@NonNull LoadInitialParams<Integer> params, @NonNull final LoadInitialCallback<Integer, NewsDetail> callback) {
         Call<NewsApiResponse> call;
         if (category == null)
-            call = apiInterface.getAllNews(null, Const.API_KEY, "google-news", PAGE_SIZE, FIRST_PAGE);
-        else call = apiInterface.getAllNews(category, Const.API_KEY, null, PAGE_SIZE, FIRST_PAGE);
+            call = apiInterface.getAllNews(null, Const.NEWS_API_KEY, "google-news", PAGE_SIZE, FIRST_PAGE);
+        else call = apiInterface.getAllNews(category, Const.NEWS_API_KEY, null, PAGE_SIZE, FIRST_PAGE);
         isLoading.postValue(true);
         call.enqueue(new Callback<NewsApiResponse>() {
             @Override
@@ -56,12 +65,15 @@ public class NewsDataSource extends PageKeyedDataSource<Integer, NewsDetail> {
 
     }
 
+    /**
+     * Since we iterate from first page, this method won't be called but nice to be defined.
+     */
     @Override
     public void loadBefore(@NonNull final LoadParams<Integer> params, @NonNull final LoadCallback<Integer, NewsDetail> callback) {
         Call<NewsApiResponse> call;
         if (category == null)
-            call = apiInterface.getAllNews(null, Const.API_KEY, "google-news", PAGE_SIZE, params.key);
-        else call = apiInterface.getAllNews(category, Const.API_KEY, null, PAGE_SIZE, params.key);
+            call = apiInterface.getAllNews(null, Const.NEWS_API_KEY, "google-news", PAGE_SIZE, params.key);
+        else call = apiInterface.getAllNews(category, Const.NEWS_API_KEY, null, PAGE_SIZE, params.key);
         isLoading.postValue(true);
         call.enqueue(new Callback<NewsApiResponse>() {
             @Override
@@ -83,12 +95,19 @@ public class NewsDataSource extends PageKeyedDataSource<Integer, NewsDetail> {
         });
     }
 
+    /**
+     *
+     * The last data chunk is determined by comparing total downloaded data vs total available data.
+     * Total available data is got by - response.body().getTotalResults() since the api passes the param "totalResults" in
+     * the response with total available count.
+     */
+
     @Override
     public void loadAfter(@NonNull final LoadParams<Integer> params, @NonNull final LoadCallback<Integer, NewsDetail> callback) {
         Call<NewsApiResponse> call;
         if (category == null)
-            call = apiInterface.getAllNews(null, Const.API_KEY, "google-news", PAGE_SIZE, params.key);
-        else call = apiInterface.getAllNews(category, Const.API_KEY, null, PAGE_SIZE, params.key);
+            call = apiInterface.getAllNews(null, Const.NEWS_API_KEY, "google-news", PAGE_SIZE, params.key);
+        else call = apiInterface.getAllNews(category, Const.NEWS_API_KEY, null, PAGE_SIZE, params.key);
         isLoading.postValue(true);
         call.enqueue(new Callback<NewsApiResponse>() {
             @Override

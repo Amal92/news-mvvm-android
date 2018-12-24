@@ -16,6 +16,9 @@ import com.google.gson.Gson;
  * Created by amal on 20/12/18.
  */
 
+/**
+ * View to be used to display weather info above marker in map in weather fragment.
+ */
 public class CustomInfoWindow implements GoogleMap.InfoWindowAdapter {
 
     private View view;

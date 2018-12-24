@@ -42,10 +42,20 @@ public class NewsDataRepository {
         return Instance;
     }
 
+    /**
+     * Gets the data stored in database queried by the url param. This method is used to check if a particle news
+     * article is already saved to display the corresponding bookmark status.
+     * @param newsDetail: the data to be queried.
+     * @return
+     */
     public List<NewsDetail> getAllSavedNews(NewsDetail newsDetail) {
         return newsDao.getAllSavedNews(newsDetail.getUrl());
     }
 
+    /**
+     * Save news article to database
+     * @param newsDetail: details of which article to save to database.
+     */
     public void insertNews(NewsDetail newsDetail) {
         new insertAsyncTask(newsDao).execute(newsDetail);
     }
@@ -54,6 +64,10 @@ public class NewsDataRepository {
         return savedNews;
     }
 
+    /**
+     * Delete news article from databse
+     * @param newsDetail: article to delete
+     */
     public void deleteNews(NewsDetail newsDetail) {
         new deleteAsyncTask(newsDao).execute(newsDetail);
     }

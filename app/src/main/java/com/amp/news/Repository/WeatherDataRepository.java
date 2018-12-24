@@ -8,6 +8,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.amp.news.Models.Weather.WeatherDetail;
 import com.amp.news.Networking.ApiInterface;
@@ -29,6 +30,11 @@ import retrofit2.Response;
  * Created by amal on 20/12/18.
  */
 
+/**
+ * Data layer to fetch data used in weather fragment.
+ * Data fetched include current location and weather data of geo coordinates.
+ */
+
 public class WeatherDataRepository {
 
     private static WeatherDataRepository Instance = null;
@@ -48,6 +54,12 @@ public class WeatherDataRepository {
         return Instance;
     }
 
+    /**
+     * Fetches weather data from open weather api based on geo coordinates.
+     * @param latitude
+     * @param longitude
+     * @return
+     */
     public LiveData<WeatherDetail> getWeatherInfo(double latitude, double longitude) {
         final MutableLiveData<WeatherDetail> data = new MutableLiveData<>();
 
@@ -60,7 +72,7 @@ public class WeatherDataRepository {
 
             @Override
             public void onFailure(Call<WeatherDetail> call, Throwable t) {
-
+                Log.d("","");
             }
         });
 
@@ -79,6 +91,13 @@ public class WeatherDataRepository {
 
     }
 
+    /**
+     * Fetches the locality name of the geo coordinates using google's geocoder api in a background thread
+     * and posts value when fetched
+     * @param latitude
+     * @param longitude
+     * @param data
+     */
     public void getCurrentCityName(double latitude, double longitude, MutableLiveData<String> data) {
         //  final MutableLiveData<String> data = new MutableLiveData<>();
         new MyAsyncTask(data, geocoder).execute(latitude, longitude);
