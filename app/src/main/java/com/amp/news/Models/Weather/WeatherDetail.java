@@ -1,5 +1,6 @@
 package com.amp.news.Models.Weather;
 
+import com.amp.news.Models.ApiResponsePojo.ErrorBody;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -15,6 +16,19 @@ public class WeatherDetail {
     @SerializedName("main")
     private Temperature temperature;
     private String name;
+    private Throwable error;
+    private ErrorBody errorBody;
+
+    public WeatherDetail(Throwable error) {
+        this.error = error;
+    }
+
+    public WeatherDetail(ErrorBody errorBody) {
+        this.errorBody = errorBody;
+    }
+
+    public WeatherDetail() {
+    }
 
     public List<Weather> getWeatherList() {
         return weatherList;
@@ -38,5 +52,21 @@ public class WeatherDetail {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Throwable getError() {
+        return error;
+    }
+
+    public void setError(Throwable error) {
+        this.error = error;
+    }
+
+    public ErrorBody getErrorBody() {
+        return errorBody;
+    }
+
+    public void setErrorBody(ErrorBody errorBody) {
+        this.errorBody = errorBody;
     }
 }

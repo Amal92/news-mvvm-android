@@ -8,8 +8,8 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.AsyncTask;
-import android.util.Log;
 
+import com.amp.news.Models.ApiResponsePojo.ErrorBody;
 import com.amp.news.Models.Weather.WeatherDetail;
 import com.amp.news.Networking.ApiInterface;
 import com.amp.news.Networking.RetrofitApiClient;
@@ -19,11 +19,14 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.Locale;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Converter;
 import retrofit2.Response;
 
 /**
@@ -41,6 +44,8 @@ public class WeatherDataRepository {
     private ApiInterface apiInterface;
     private FusedLocationProviderClient mFusedLocationClient;
     private Geocoder geocoder;
+    private Converter<ResponseBody, ErrorBody> errorConverter =
+            RetrofitApiClient.getInstance().responseBodyConverter(ErrorBody.class, new Annotation[0]);
 
     public WeatherDataRepository(Application application) {
         this.apiInterface = RetrofitApiClient.getWeatherInstance().create(ApiInterface.class);
@@ -56,6 +61,7 @@ public class WeatherDataRepository {
 
     /**
      * Fetches weather data from open weather api based on geo coordinates.
+     *
      * @param latitude
      * @param longitude
      * @return
@@ -67,12 +73,22 @@ public class WeatherDataRepository {
         call.enqueue(new Callback<WeatherDetail>() {
             @Override
             public void onResponse(Call<WeatherDetail> call, Response<WeatherDetail> response) {
-                data.setValue(response.body());
+                if (response.code() == 200)
+                    data.setValue(response.body());
+                else {
+                    try {
+                        ErrorBody errorBody = errorConverter.convert(response.errorBody());
+                        data.postValue(new WeatherDetail(errorBody));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
             }
 
             @Override
             public void onFailure(Call<WeatherDetail> call, Throwable t) {
-                Log.d("","");
+                data.postValue(new WeatherDetail(t));
             }
         });
 
@@ -94,6 +110,7 @@ public class WeatherDataRepository {
     /**
      * Fetches the locality name of the geo coordinates using google's geocoder api in a background thread
      * and posts value when fetched
+     *
      * @param latitude
      * @param longitude
      * @param data
